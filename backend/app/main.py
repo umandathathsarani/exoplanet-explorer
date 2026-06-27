@@ -5,6 +5,8 @@ from typing import Optional
 from sqlalchemy.orm import Session
 from app.core.database import engine, get_db
 from app.models import models
+import google.generativeai as genai
+import os
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -118,3 +120,29 @@ def delete_research_note(planet_id: int, db: Session = Depends(get_db)):
     db.delete(note)
     db.commit()
     return {"status": "success", "message": "Research log deleted."}
+
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+model = genai.GenerativeModel('gemini-1.5-flash')
+
+@app.post("/api/exoplanets/{planet_id}/analyze")
+def get_ai_analysis(planet_id: int, db: Session = Depends(get_db)):
+    planet = db.query(models.Exoplanet).filter(models.Exoplanet.id == planet_id).first()
+    note = db.query(models.PersonalNote).filter(models.PersonalNote.planet_id == planet_id).first()
+    
+    if not planet:
+        raise HTTPException(status_code=404, detail="Planet not found")
+
+    prompt = f"""
+    Act as an astrophysicist. Provide a short, engaging scientific analysis for the exoplanet {planet.name}.
+    Data:
+    - Distance: {planet.distance_ly} light years
+    - Mass: {planet.mass_earth} Earth masses
+    - Orbital Period: {planet.orbital_period_days} days
+    - Host Star: {planet.host_star.name} (Temperature: {planet.host_star.temperature_k}K)
+    - Researcher's Note: {note.content if note else 'None'}
+    
+    Provide an analysis on its potential habitability and any interesting scientific observations. Keep it under 150 words.
+    """
+    
+    response = model.generate_content(prompt)
+    return {"analysis": response.text}

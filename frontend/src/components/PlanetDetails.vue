@@ -10,6 +10,9 @@ const isEditing = ref(false)
 const showDeleteConfirm = ref(false)
 const loading = ref(true)
 
+const aiAnalysis = ref('')
+const isAnalyzing = ref(false)
+
 onMounted(async () => {
   if (!props.planetId) return;
 
@@ -50,6 +53,21 @@ const toggleFavorite = async () => {
   } catch (error) {
     planetData.value.is_favorite = !planetData.value.is_favorite
     alert("Could not update favorite status.")
+  }
+}
+
+const requestAnalysis = async () => {
+  isAnalyzing.value = true
+  try {
+    const response = await fetch(`http://localhost:8000/api/exoplanets/${planetData.value.id}/analyze`, {
+      method: 'POST'
+    })
+    const data = await response.json()
+    aiAnalysis.value = data.analysis
+  } catch (error) {
+    alert("AI Analysis service currently unreachable.")
+  } finally {
+    isAnalyzing.value = false
   }
 }
 </script>
