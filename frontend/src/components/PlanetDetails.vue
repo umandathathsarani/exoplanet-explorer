@@ -45,13 +45,13 @@ const saveNote = async () => {
       body: JSON.stringify({ content: researchNote.value })
     })
     
-    if (!response.ok) throw new Error("Failed to save note")
-    
-    setTimeout(() => { isSaving.value = false }, 500) 
+    if (!response.ok) throw new Error("Failed to save")   
+     alert("Research Log Saved Successfully!") 
   } catch (error) {
     console.error("Save failed:", error)
-    isSaving.value = false
     alert("Could not save your research note.")
+  } finally {
+    isSaving.value = false 
   }
 }
 </script>
