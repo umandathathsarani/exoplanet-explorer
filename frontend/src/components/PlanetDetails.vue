@@ -21,6 +21,23 @@ onMounted(async () => {
     loading.value = false
   }
 })
+
+const toggleFavorite = async () => {
+  planetData.value.is_favorite = !planetData.value.is_favorite
+
+  try {
+    const response = await fetch(`http://localhost:8000/api/exoplanets/${planetData.value.id}/favorite`, {
+      method: 'PATCH'
+    })
+    
+    if (!response.ok) throw new Error("Failed to update database")
+    
+  } catch (error) {
+    console.error("Favorite toggle failed:", error)
+    planetData.value.is_favorite = !planetData.value.is_favorite
+    alert("Communication failure: Could not save favorite status.")
+  }
+}
 </script>
 
 <template>
@@ -36,13 +53,24 @@ onMounted(async () => {
       </div>
 
       <div v-else-if="planetData" class="space-y-8">
-        <div>
-          <h2 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-blue-500 mb-2">
-            {{ planetData.name }}
-          </h2>
-          <span class="inline-block bg-blue-900/50 text-blue-300 text-sm px-3 py-1 rounded-full border border-blue-700/50">
-            Detected via {{ planetData.discovery_method }}
-          </span>
+        <div class="flex items-start justify-between">
+          <div>
+            <h2 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-blue-500 mb-2">
+              {{ planetData.name }}
+            </h2>
+            <span class="inline-block bg-blue-900/50 text-blue-300 text-sm px-3 py-1 rounded-full border border-blue-700/50">
+              Detected via {{ planetData.discovery_method }}
+            </span>
+          </div>
+          
+          <button @click="toggleFavorite" class="focus:outline-none transform hover:scale-110 transition-transform mt-1">
+            <svg xmlns="http://www.w3.org/2000/svg" 
+                 :class="planetData.is_favorite ? 'text-yellow-400 fill-yellow-400' : 'text-slate-600 fill-transparent hover:text-yellow-400/50'" 
+                 class="w-10 h-10 transition-colors duration-300" 
+                 viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+            </svg>
+          </button>
         </div>
 
         <div class="bg-slate-800 rounded-xl p-5 border border-slate-700">
