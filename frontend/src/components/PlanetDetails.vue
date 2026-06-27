@@ -11,13 +11,15 @@ const showDeleteConfirm = ref(false)
 const loading = ref(true)
 
 onMounted(async () => {
+  if (!props.planetId) return;
+
   try {
     const response = await fetch(`http://localhost:8000/api/exoplanets/${props.planetId}`)
     if (!response.ok) throw new Error("Failed to fetch")
     planetData.value = await response.json()
     researchNote.value = planetData.value.note
   } catch (error) {
-    console.error(error)
+    console.error("Load failed:", error)
   } finally {
     loading.value = false
   }

@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import PlanetDetails from './PlanetDetails.vue'
+import { globalState } from '../state.js'
 
 const searchFilters = ref({
   method: '',
@@ -158,6 +159,10 @@ const toggleFavorite = async (planet) => {
       </div>
     </div>
 
-    <PlanetDetails v-if="selectedPlanetId" :planetId="selectedPlanetId" @close="selectedPlanetId = null" />
+    <PlanetDetails 
+      v-if="selectedPlanetId !== null" 
+      :planetId="selectedPlanetId" 
+      @close="selectedPlanetId = null" 
+    />
   </div>
 </template>
