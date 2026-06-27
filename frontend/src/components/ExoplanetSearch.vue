@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import PlanetDetails from './PlanetDetails.vue'
 
 const searchFilters = ref({
   method: '',
@@ -12,6 +13,7 @@ const modalMessage = ref('')
 const isError = ref(false)
 
 const searchResults = ref([])
+const selectedPlanetId = ref(null)
 
 const handleSearch = async () => {
   try {
@@ -26,15 +28,14 @@ const handleSearch = async () => {
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
 
     const data = await response.json()
-   
+    
     searchResults.value = data.results
-  
     isError.value = false
     modalMessage.value = data.message
     showModal.value = true
 
   } catch (error) {
-    console.error("Communication error:", error)
+    console.error(error)
     isError.value = true
     modalMessage.value = "Failed to connect to the backend. Is FastAPI running?"
     showModal.value = true
@@ -87,8 +88,7 @@ const handleSearch = async () => {
       </h3>
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        
-        <div v-for="planet in searchResults" :key="planet.id" class="bg-slate-800 border border-slate-700 hover:border-blue-500/50 p-5 rounded-xl transition-all shadow-lg hover:shadow-blue-900/20 group relative overflow-hidden">
+        <div v-for="planet in searchResults" :key="planet.id" @click="selectedPlanetId = planet.id" class="bg-slate-800 border border-slate-700 hover:border-blue-500/50 p-5 rounded-xl transition-all shadow-lg hover:shadow-blue-900/20 group relative overflow-hidden cursor-pointer">
           
           <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
 
@@ -114,7 +114,6 @@ const handleSearch = async () => {
             </div>
           </div>
         </div>
-
       </div>
     </div>
 
@@ -131,5 +130,7 @@ const handleSearch = async () => {
         </button>
       </div>
     </div>
+
+    <PlanetDetails v-if="selectedPlanetId" :planetId="selectedPlanetId" @close="selectedPlanetId = null" />
   </div>
 </template>

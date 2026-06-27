@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
@@ -15,7 +15,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"], 
+    allow_origins=["http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -32,9 +32,8 @@ def read_root():
 
 @app.post("/api/exoplanets/search")
 def search_exoplanets(query: SearchQuery, db: Session = Depends(get_db)):
-
     db_query = db.query(models.Exoplanet)
-
+    
     if query.method:
         db_query = db_query.filter(models.Exoplanet.discovery_method == query.method)
         
@@ -47,4 +46,25 @@ def search_exoplanets(query: SearchQuery, db: Session = Depends(get_db)):
         "status": "success",
         "message": f"Deep space scan complete. Found {len(results)} planetary candidates.",
         "results": results
+    }
+
+@app.get("/api/exoplanets/{planet_id}")
+def get_planet_details(planet_id: int, db: Session = Depends(get_db)):
+    planet = db.query(models.Exoplanet).filter(models.Exoplanet.id == planet_id).first()
+    
+    if not planet:
+        raise HTTPException(status_code=404, detail="Planet not found in database.")
+        
+    return {
+        "id": planet.id,
+        "name": planet.name,
+        "mass_earth": planet.mass_earth,
+        "orbital_period_days": planet.orbital_period_days,
+        "discovery_method": planet.discovery_method,
+        "distance_ly": planet.distance_ly,
+        "host_star": {
+            "name": planet.host_star.name,
+            "temperature_k": planet.host_star.temperature_k,
+            "luminosity": planet.host_star.luminosity
+        }
     }
