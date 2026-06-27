@@ -12,6 +12,7 @@ const loading = ref(true)
 
 const aiAnalysis = ref('')
 const isAnalyzing = ref(false)
+const errorMessage = ref('')
 
 onMounted(async () => {
   if (!props.planetId) return;
@@ -58,16 +59,16 @@ const toggleFavorite = async () => {
 
 const requestAnalysis = async () => {
   isAnalyzing.value = true
-  aiAnalysis.value = '' 
+  errorMessage.value = ''
   try {
     const response = await fetch(`http://localhost:8000/api/exoplanets/${planetData.value.id}/analyze`, {
       method: 'POST'
     })
+    if (!response.ok) throw new Error("Service Unavailable")
     const data = await response.json()
     aiAnalysis.value = data.analysis
   } catch (error) {
-    console.error(error)
-    alert("AI Analysis service currently unreachable.")
+    errorMessage.value = "We couldn't reach the AI observatory. Please check your connection or API key."
   } finally {
     isAnalyzing.value = false
   }
@@ -153,6 +154,14 @@ const requestAnalysis = async () => {
         <div class="flex gap-3">
           <button @click="deleteNote" class="flex-1 bg-red-600 py-2 rounded text-white hover:bg-red-500 transition">Delete</button>
           <button @click="showDeleteConfirm = false" class="flex-1 bg-slate-700 py-2 rounded text-white hover:bg-slate-600 transition">Cancel</button>
+        </div>
+      </div>
+
+      <div v-if="errorMessage" class="fixed inset-0 flex items-center justify-center bg-black/80 z-[70]">
+        <div class="bg-slate-800 p-6 rounded-xl border border-red-500/50 max-w-sm w-full">
+          <h3 class="text-xl font-bold text-red-400 mb-4">Transmission Error</h3>
+          <p class="text-slate-300 mb-6">{{ errorMessage }}</p>
+          <button @click="errorMessage = ''" class="w-full bg-slate-700 py-2 rounded text-white hover:bg-slate-600 transition">Dismiss</button>
         </div>
       </div>
     </div>
