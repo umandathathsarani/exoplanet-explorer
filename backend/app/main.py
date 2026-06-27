@@ -7,11 +7,12 @@ from app.core.database import engine, get_db
 from app.models import models
 from google import genai
 import os
-import time 
+import time
+from dotenv import load_dotenv
+
+load_dotenv()
 
 models.Base.metadata.create_all(bind=engine)
-
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 app = FastAPI(
     title="Exoplanet Explorer API",
@@ -25,6 +26,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+API_KEYS = os.getenv("GEMINI_API_KEYS", "").split(",")
 
 class SearchQuery(BaseModel):
     method: Optional[str] = ""
@@ -90,7 +93,6 @@ def delete_research_note(planet_id: int, db: Session = Depends(get_db)):
 def get_ai_analysis(planet_id: int, db: Session = Depends(get_db)):
     planet = db.query(models.Exoplanet).filter(models.Exoplanet.id == planet_id).first()
     note = db.query(models.PersonalNote).filter(models.PersonalNote.planet_id == planet_id).first()
-    
     if not planet: raise HTTPException(status_code=404, detail="Planet not found")
 
     prompt = f"""
@@ -112,23 +114,25 @@ def get_ai_analysis(planet_id: int, db: Session = Depends(get_db)):
     wait_time = 2
 
     for i in range(max_retries):
-        try:
-            response = client.models.generate_content(
-                model='gemini-2.0-flash', 
-                contents=prompt
-            )
-            return {"analysis": response.text}
-            
-        except Exception as e:
-            if "429" in str(e) and i < max_retries - 1:
-                print(f"Rate limit hit. Retrying in {wait_time}s...")
-                time.sleep(wait_time)
-                wait_time *= 2
+        for key in API_KEYS:
+            if not key.strip(): continue
+            try:
+                client = genai.Client(api_key=key.strip())
+                response = client.models.generate_content(
+                    model='gemini-2.0-flash', 
+                    contents=prompt
+                )
+                return {"analysis": response.text}
+            except Exception as e:
+                print(f"Key failure: {e}")
                 continue
-            else:
-                return {
-                    "analysis": f"[SIMULATED ACADEMIC REPORT] Exoplanet {planet.name} presents characteristics consistent with established orbital models. "
-                                f"Given a mass of {planet.mass_earth} M⊕, terrestrial composition remains a statistically significant hypothesis. "
-                                "High observational demand on the local network currently limits real-time data synthesis. "
-                                "Prioritize this system for future spectroscopic transit analysis."
-                }
+        
+        if i < max_retries - 1:
+            time.sleep(wait_time)
+            wait_time *= 2
+        else:
+            return {
+                "analysis": f"[SIMULATED ACADEMIC REPORT] Exoplanet {planet.name} analysis remains consistent with standard astrophysical models. "
+                            "High demand on computational resources currently prevents real-time generation. "
+                            "Prioritize this system for future spectroscopic transit analysis."
+            }
