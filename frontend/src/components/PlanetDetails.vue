@@ -9,12 +9,15 @@ const emit = defineEmits(['close'])
 
 const planetData = ref(null)
 const loading = ref(true)
+const researchNote = ref('')
+const isSaving = ref(false)
 
 onMounted(async () => {
   try {
     const response = await fetch(`http://localhost:8000/api/exoplanets/${props.planetId}`)
     if (!response.ok) throw new Error("Failed to fetch details")
     planetData.value = await response.json()
+    researchNote.value = planetData.value.note 
   } catch (error) {
     console.error(error)
   } finally {
@@ -24,18 +27,31 @@ onMounted(async () => {
 
 const toggleFavorite = async () => {
   planetData.value.is_favorite = !planetData.value.is_favorite
-
   try {
-    const response = await fetch(`http://localhost:8000/api/exoplanets/${planetData.value.id}/favorite`, {
-      method: 'PATCH'
-    })
-    
+    const response = await fetch(`http://localhost:8000/api/exoplanets/${planetData.value.id}/favorite`, { method: 'PATCH' })
     if (!response.ok) throw new Error("Failed to update database")
-    
   } catch (error) {
-    console.error("Favorite toggle failed:", error)
     planetData.value.is_favorite = !planetData.value.is_favorite
     alert("Communication failure: Could not save favorite status.")
+  }
+}
+
+const saveNote = async () => {
+  isSaving.value = true
+  try {
+    const response = await fetch(`http://localhost:8000/api/exoplanets/${planetData.value.id}/note`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: researchNote.value })
+    })
+    
+    if (!response.ok) throw new Error("Failed to save note")
+    
+    setTimeout(() => { isSaving.value = false }, 500) 
+  } catch (error) {
+    console.error("Save failed:", error)
+    isSaving.value = false
+    alert("Could not save your research note.")
   }
 }
 </script>
@@ -87,6 +103,25 @@ const toggleFavorite = async () => {
           <div class="space-y-3 font-mono text-sm">
             <div class="flex justify-between"><span class="text-slate-400">Temperature:</span> <span class="text-indigo-200">{{ planetData.host_star.temperature_k }} K</span></div>
             <div class="flex justify-between"><span class="text-slate-400">Luminosity:</span> <span class="text-indigo-200">{{ planetData.host_star.luminosity }} (vs Sun)</span></div>
+          </div>
+        </div>
+
+        <div class="mt-8">
+          <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">Research Log</h3>
+          <textarea 
+            v-model="researchNote" 
+            rows="4" 
+            placeholder="Record your observations here..."
+            class="w-full bg-slate-900/50 border border-slate-700 rounded-xl p-4 text-slate-200 focus:outline-none focus:border-blue-500 resize-none"
+          ></textarea>
+          <div class="flex justify-end mt-2">
+            <button 
+              @click="saveNote" 
+              :disabled="isSaving"
+              class="bg-blue-600 hover:bg-blue-500 disabled:bg-blue-800 text-white text-sm font-semibold py-2 px-4 rounded-lg transition-colors flex items-center gap-2"
+            >
+              {{ isSaving ? 'Encrypting Log...' : 'Save Log' }}
+            </button>
           </div>
         </div>
 

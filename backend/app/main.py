@@ -26,6 +26,9 @@ class SearchQuery(BaseModel):
     maxDistance: float
     minMass: float
 
+class NoteUpdate(BaseModel):
+    content: str
+
 @app.get("/")
 def read_root():
     return {"message": "Hello Universe! The Exoplanet Analyst is online."}
@@ -55,6 +58,8 @@ def get_planet_details(planet_id: int, db: Session = Depends(get_db)):
     if not planet:
         raise HTTPException(status_code=404, detail="Planet not found in database.")
         
+    note = db.query(models.PersonalNote).filter(models.PersonalNote.planet_id == planet_id).first()
+        
     return {
         "id": planet.id,
         "name": planet.name,
@@ -63,6 +68,7 @@ def get_planet_details(planet_id: int, db: Session = Depends(get_db)):
         "discovery_method": planet.discovery_method,
         "distance_ly": planet.distance_ly,
         "is_favorite": planet.is_favorite,
+        "note": note.content if note else "",
         "host_star": {
             "name": planet.host_star.name,
             "temperature_k": planet.host_star.temperature_k,
@@ -85,3 +91,20 @@ def toggle_favorite(planet_id: int, db: Session = Depends(get_db)):
         "message": f"Updated favorite status for {planet.name}",
         "is_favorite": planet.is_favorite
     }
+
+@app.post("/api/exoplanets/{planet_id}/note")
+def save_research_note(planet_id: int, note_data: NoteUpdate, db: Session = Depends(get_db)):
+    planet = db.query(models.Exoplanet).filter(models.Exoplanet.id == planet_id).first()
+    if not planet:
+        raise HTTPException(status_code=404, detail="Planet not found")
+
+    existing_note = db.query(models.PersonalNote).filter(models.PersonalNote.planet_id == planet_id).first()
+    
+    if existing_note:
+        existing_note.content = note_data.content
+    else:
+        new_note = models.PersonalNote(content=note_data.content, planet_id=planet_id)
+        db.add(new_note)
+        
+    db.commit()
+    return {"status": "success", "message": "Research log updated."}
