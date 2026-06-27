@@ -1,8 +1,14 @@
+from sqlalchemy import text
 from app.core.database import SessionLocal, engine
 from app.models.models import Base, StarSystem, Exoplanet
 
 print("Rebuilding database tables...")
-Base.metadata.drop_all(bind=engine)
+
+with engine.connect() as conn:
+    conn.execute(text("DROP SCHEMA public CASCADE;"))
+    conn.execute(text("CREATE SCHEMA public;"))
+    conn.commit()
+
 Base.metadata.create_all(bind=engine)
 
 db = SessionLocal()

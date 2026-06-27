@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, Text
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, Text, Boolean
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 
@@ -25,8 +25,9 @@ class Exoplanet(Base):
     name = Column(String, unique=True, index=True)
     mass_earth = Column(Float)
     orbital_period_days = Column(Float)
-    discovery_method = Column(String) # <-- NEW
-    distance_ly = Column(Float)       # <-- NEW
+    discovery_method = Column(String)
+    distance_ly = Column(Float)
+    is_favorite = Column(Boolean, default=False)
     star_id = Column(Integer, ForeignKey("star_systems.id"))
     
     host_star = relationship("StarSystem", back_populates="planets")
