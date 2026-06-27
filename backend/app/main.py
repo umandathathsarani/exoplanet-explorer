@@ -108,3 +108,13 @@ def save_research_note(planet_id: int, note_data: NoteUpdate, db: Session = Depe
         
     db.commit()
     return {"status": "success", "message": "Research log updated."}
+
+@app.delete("/api/exoplanets/{planet_id}/note")
+def delete_research_note(planet_id: int, db: Session = Depends(get_db)):
+    note = db.query(models.PersonalNote).filter(models.PersonalNote.planet_id == planet_id).first()
+    if not note:
+        raise HTTPException(status_code=404, detail="Note not found")
+    
+    db.delete(note)
+    db.commit()
+    return {"status": "success", "message": "Research log deleted."}
