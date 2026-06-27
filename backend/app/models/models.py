@@ -25,6 +25,8 @@ class Exoplanet(Base):
     name = Column(String, unique=True, index=True)
     mass_earth = Column(Float)
     orbital_period_days = Column(Float)
+    discovery_method = Column(String) # <-- NEW
+    distance_ly = Column(Float)       # <-- NEW
     star_id = Column(Integer, ForeignKey("star_systems.id"))
     
     host_star = relationship("StarSystem", back_populates="planets")

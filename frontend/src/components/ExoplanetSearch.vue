@@ -59,7 +59,7 @@ const handleSearch = async () => {
             <label class="font-semibold text-slate-300">Maximum Distance</label>
             <span class="text-blue-400 font-mono">{{ searchFilters.maxDistance }} light-years</span>
           </div>
-          <input type="range" min="10" max="5000" step="50" v-model.number="searchFilters.maxDistance" class="w-full h-2 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-blue-500"/>
+          <input type="range" min="0" max="5000" step="10" v-model.number="searchFilters.maxDistance" class="w-full h-2 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-blue-500"/>
         </div>
 
         <div>
