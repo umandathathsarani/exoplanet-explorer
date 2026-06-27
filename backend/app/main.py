@@ -131,24 +131,30 @@ def get_ai_analysis(planet_id: int, db: Session = Depends(get_db)):
     if not planet:
         raise HTTPException(status_code=404, detail="Planet not found")
 
-    prompt = f"""
-    Act as an astrophysicist. Provide a peer-review-style analysis for the exoplanet {planet.name}.
-    
-    Data:
-    - Distance: {planet.distance_ly} light years
-    - Mass: {planet.mass_earth} Earth masses
-    - Orbital Period: {planet.orbital_period_days} days
-    - Host Star: {planet.host_star.name} (Temperature: {planet.host_star.temperature_k}K, Luminosity: {planet.host_star.luminosity})
-    - Researcher's Note: {note.content if note else 'None'}
-    
-    Analyze this planet's characteristics. Discuss its classification, potential composition, and habitability profile based on current astrophysical models. 
-    Use precise, formal, and academic language appropriate for a professional research journal. 
-    Conclude with a brief recommendation for future observational priority. Keep it under 150 words.
-    """
-    
-    response = client.models.generate_content(
-        model='gemini-1.5-flash', 
-        contents=prompt
-    )
-    
-    return {"analysis": response.text}
+    try:
+        prompt = f"""
+        Act as an astrophysicist. Provide a peer-review-style analysis for the exoplanet {planet.name}.
+        
+        Data:
+        - Distance: {planet.distance_ly} light years
+        - Mass: {planet.mass_earth} Earth masses
+        - Orbital Period: {planet.orbital_period_days} days
+        - Host Star: {planet.host_star.name} (Temperature: {planet.host_star.temperature_k}K, Luminosity: {planet.host_star.luminosity})
+        - Researcher's Note: {note.content if note else 'None'}
+        
+        Analyze this planet's characteristics. Discuss its classification, potential composition, and habitability profile based on current astrophysical models. 
+        Use precise, formal, and academic language appropriate for a professional research journal. 
+        Conclude with a brief recommendation for future observational priority. Keep it under 150 words.
+        """
+
+        response = client.models.generate_content(
+            model='gemini-2.0-flash', 
+            contents=prompt
+        )
+        
+        return {"analysis": response.text}
+        
+    except Exception as e:
+        print(f"--- AI ERROR DETECTED ---")
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
