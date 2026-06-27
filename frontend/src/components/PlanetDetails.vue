@@ -58,6 +58,7 @@ const toggleFavorite = async () => {
 
 const requestAnalysis = async () => {
   isAnalyzing.value = true
+  aiAnalysis.value = '' 
   try {
     const response = await fetch(`http://localhost:8000/api/exoplanets/${planetData.value.id}/analyze`, {
       method: 'POST'
@@ -65,6 +66,7 @@ const requestAnalysis = async () => {
     const data = await response.json()
     aiAnalysis.value = data.analysis
   } catch (error) {
+    console.error(error)
     alert("AI Analysis service currently unreachable.")
   } finally {
     isAnalyzing.value = false
@@ -117,9 +119,7 @@ const requestAnalysis = async () => {
               <button v-else @click="isEditing = true" class="text-emerald-400 hover:text-emerald-300 text-sm">Add Note</button>
             </div>
           </div>
-          
           <p v-if="!isEditing" class="text-slate-200 min-h-[100px] text-sm">{{ researchNote || 'No notes yet.' }}</p>
-          
           <div v-else class="space-y-3">
             <textarea v-model="researchNote" class="w-full bg-slate-900 border border-slate-600 rounded p-3 text-white focus:border-blue-500 focus:outline-none text-sm"></textarea>
             <div class="flex gap-2">
@@ -129,9 +129,20 @@ const requestAnalysis = async () => {
           </div>
         </div>
 
-        <button class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-300 py-3 rounded-lg transition-colors">
-          Request AI Analysis (Coming Soon)
-        </button>
+        <div class="mt-4">
+          <button 
+            @click="requestAnalysis" 
+            :disabled="isAnalyzing"
+            class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white py-3 rounded-lg transition-all font-bold disabled:opacity-50"
+          >
+            {{ isAnalyzing ? 'Consulting the Observatory...' : 'Request AI Analysis' }}
+          </button>
+          
+          <div v-if="aiAnalysis" class="mt-4 p-5 bg-indigo-950/40 rounded-xl border border-indigo-500/30 text-indigo-100 text-sm leading-relaxed italic font-serif">
+            <h4 class="font-bold text-indigo-300 mb-2 not-italic uppercase text-xs tracking-wider">Astrophysical Report:</h4>
+            {{ aiAnalysis }}
+          </div>
+        </div>
       </div>
     </div>
 
