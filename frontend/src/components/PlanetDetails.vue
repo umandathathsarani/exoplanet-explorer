@@ -67,17 +67,23 @@ const deleteNote = async () => {
         <div class="bg-slate-800 p-5 rounded-xl border border-slate-700">
           <div class="flex justify-between mb-4">
             <h3 class="text-sm font-bold text-slate-400 uppercase">Research Log</h3>
-            <button v-if="!isEditing" @click="isEditing = true" class="text-blue-400 hover:text-blue-300 text-sm">Edit</button>
+            
+            <div v-if="!isEditing" class="flex gap-3">
+              <div v-if="researchNote" class="flex gap-3">
+                <button @click="isEditing = true" class="text-blue-400 hover:text-blue-300 text-sm">Edit</button>
+                <button @click="showDeleteConfirm = true" class="text-red-400 hover:text-red-300 text-sm">Delete</button>
+              </div>
+              <button v-else @click="isEditing = true" class="text-emerald-400 hover:text-emerald-300 text-sm">Add Note</button>
+            </div>
           </div>
           
           <p v-if="!isEditing" class="text-slate-200 min-h-[100px]">{{ researchNote || 'No notes yet.' }}</p>
           
           <div v-else class="space-y-3">
-            <textarea v-model="researchNote" class="w-full bg-slate-900 border border-slate-600 rounded p-3 text-white"></textarea>
+            <textarea v-model="researchNote" class="w-full bg-slate-900 border border-slate-600 rounded p-3 text-white focus:border-blue-500 focus:outline-none"></textarea>
             <div class="flex gap-2">
-              <button @click="saveNote" class="bg-blue-600 text-white px-4 py-2 rounded">Save</button>
-              <button @click="isEditing = false" class="bg-slate-700 text-white px-4 py-2 rounded">Cancel</button>
-              <button @click="showDeleteConfirm = true" class="text-red-400 ml-auto hover:text-red-300">Delete</button>
+              <button @click="saveNote" class="bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-500">Save</button>
+              <button @click="isEditing = false" class="bg-slate-700 text-white px-4 py-2 rounded text-sm hover:bg-slate-600">Cancel</button>
             </div>
           </div>
         </div>
