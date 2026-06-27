@@ -5,10 +5,12 @@ from typing import Optional
 from sqlalchemy.orm import Session
 from app.core.database import engine, get_db
 from app.models import models
-import google.generativeai as genai
+from google import genai
 import os
 
 models.Base.metadata.create_all(bind=engine)
+
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 app = FastAPI(
     title="Exoplanet Explorer API",
@@ -121,9 +123,6 @@ def delete_research_note(planet_id: int, db: Session = Depends(get_db)):
     db.commit()
     return {"status": "success", "message": "Research log deleted."}
 
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-model = genai.GenerativeModel('gemini-1.5-flash')
-
 @app.post("/api/exoplanets/{planet_id}/analyze")
 def get_ai_analysis(planet_id: int, db: Session = Depends(get_db)):
     planet = db.query(models.Exoplanet).filter(models.Exoplanet.id == planet_id).first()
@@ -133,16 +132,23 @@ def get_ai_analysis(planet_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Planet not found")
 
     prompt = f"""
-    Act as an astrophysicist. Provide a short, engaging scientific analysis for the exoplanet {planet.name}.
+    Act as an astrophysicist. Provide a peer-review-style analysis for the exoplanet {planet.name}.
+    
     Data:
     - Distance: {planet.distance_ly} light years
     - Mass: {planet.mass_earth} Earth masses
     - Orbital Period: {planet.orbital_period_days} days
-    - Host Star: {planet.host_star.name} (Temperature: {planet.host_star.temperature_k}K)
+    - Host Star: {planet.host_star.name} (Temperature: {planet.host_star.temperature_k}K, Luminosity: {planet.host_star.luminosity})
     - Researcher's Note: {note.content if note else 'None'}
     
-    Provide an analysis on its potential habitability and any interesting scientific observations. Keep it under 150 words.
+    Analyze this planet's characteristics. Discuss its classification, potential composition, and habitability profile based on current astrophysical models. 
+    Use precise, formal, and academic language appropriate for a professional research journal. 
+    Conclude with a brief recommendation for future observational priority. Keep it under 150 words.
     """
     
-    response = model.generate_content(prompt)
+    response = client.models.generate_content(
+        model='gemini-1.5-flash', 
+        contents=prompt
+    )
+    
     return {"analysis": response.text}
