@@ -11,6 +11,8 @@ const showModal = ref(false)
 const modalMessage = ref('')
 const isError = ref(false)
 
+const searchResults = ref([])
+
 const handleSearch = async () => {
   try {
     const response = await fetch('http://localhost:8000/api/exoplanets/search', {
@@ -24,7 +26,9 @@ const handleSearch = async () => {
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
 
     const data = await response.json()
-    
+   
+    searchResults.value = data.results
+  
     isError.value = false
     modalMessage.value = data.message
     showModal.value = true
@@ -34,12 +38,13 @@ const handleSearch = async () => {
     isError.value = true
     modalMessage.value = "Failed to connect to the backend. Is FastAPI running?"
     showModal.value = true
+    searchResults.value = []
   }
 }
 </script>
 
 <template>
-  <div>
+  <div class="pb-12">
     <div class="bg-slate-800/50 border border-slate-700/60 p-6 rounded-xl backdrop-blur-md max-w-2xl mx-auto shadow-xl">
       <h2 class="text-2xl font-bold text-blue-400 mb-6">Cosmic Database Query</h2>
       
@@ -74,6 +79,43 @@ const handleSearch = async () => {
           Scan Deep Space
         </button>
       </form>
+    </div>
+
+    <div v-if="searchResults.length > 0" class="mt-12 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <h3 class="text-xl font-bold text-slate-200 mb-6 border-b border-slate-700 pb-2">
+        Discovered Worlds ({{ searchResults.length }})
+      </h3>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <div v-for="planet in searchResults" :key="planet.id" class="bg-slate-800 border border-slate-700 hover:border-blue-500/50 p-5 rounded-xl transition-all shadow-lg hover:shadow-blue-900/20 group relative overflow-hidden">
+          
+          <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+
+          <div class="flex items-center justify-between mb-4 relative z-10">
+            <h4 class="text-xl font-bold text-teal-300 group-hover:text-teal-200 transition-colors">{{ planet.name }}</h4>
+            <span class="bg-blue-900/50 text-blue-300 text-xs px-2.5 py-1 rounded-md border border-blue-700/50 shadow-sm">
+              {{ planet.discovery_method }}
+            </span>
+          </div>
+          
+          <div class="space-y-3 text-sm text-slate-400 relative z-10">
+            <div class="flex justify-between items-center bg-slate-900/50 p-2 rounded-lg">
+              <span>Distance from Earth:</span>
+              <span class="text-slate-200 font-mono font-medium">{{ planet.distance_ly }} LY</span>
+            </div>
+            <div class="flex justify-between items-center bg-slate-900/50 p-2 rounded-lg">
+              <span>Planet Mass:</span>
+              <span class="text-slate-200 font-mono font-medium">{{ planet.mass_earth }} M⊕</span>
+            </div>
+            <div class="flex justify-between items-center bg-slate-900/50 p-2 rounded-lg">
+              <span>Orbital Period:</span>
+              <span class="text-slate-200 font-mono font-medium">{{ planet.orbital_period_days }} Days</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
 
     <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity">
