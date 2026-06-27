@@ -193,3 +193,17 @@ This project is distributed under the **MIT License**. See the **LICENSE** file 
 ## ⭐ Support
 
 If you find this project useful, consider giving the repository a ⭐ on GitHub. Your support helps improve and maintain the project.
+
+---
+
+## 👨‍💻 Author
+
+**Mummullage Binuri Umanda Thathsarani**
+
+Bachelor of Science (Honours) in Information Technology
+Specialization in Artificial Intelligence
+
+GitHub: https://github.com/your-username
+
+Passionate about Artificial Intelligence, Machine Learning, Full-Stack Development, and building intelligent software solutions.
+
