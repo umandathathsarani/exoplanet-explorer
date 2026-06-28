@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://images.openai.com/static-rsc-4/Bcv5Q6UQQUhxi7-_X2voNIOZFAXiU0XrS7Sg-Y5xg6keiKzgYZz2MUObtIhL67e9Mh_qrbEi6Kp_0uCC72piiiBDD-aHvazFIghf-hUdYY2GKmS-9EqXGQxIJN1UvsgT491Jtw-ORa_HHEPo-bbhRAdEUGVRKuabxD6k5uJepLI1l9G6YOA/b2cc76f7fbcbe252277d.svg" alt="Exoplanet Explorer Logo" width="120" />
+  <img src="frontend/public/favicon.png" alt="Exoplanet Explorer Logo" width="120" />
   
   # Exoplanet Explorer
   
