@@ -1,142 +1,55 @@
 # Contributing to Exoplanet Explorer
 
-First of all, thank you for considering contributing to **Exoplanet Explorer**! 🎉
+First off, thank you for considering contributing to Exoplanet Explorer! It's people like you that make Exoplanet Explorer such a great tool for astronomy enthusiasts.
 
-Whether you're reporting bugs, suggesting new features, improving documentation, or submitting code, your contributions help make this project better for everyone.
+Following these guidelines helps to communicate that you respect the time of the developers managing and developing this open-source project. In return, they should reciprocate that respect in addressing your issue, assessing changes, and helping you finalize your pull requests.
 
----
+## How Can I Contribute?
 
-# How to Contribute
+### Reporting Bugs
 
-Follow these steps to contribute to the project:
+Before creating bug reports, please check existing issues to see if the problem has already been reported. When you are creating a bug report, please include as many details as possible:
 
-## 1. Fork the Repository
+* Use a clear and descriptive title.
+* Describe the exact steps which reproduce the problem.
+* Provide specific examples to demonstrate the steps.
+* Describe the behavior you observed after following the steps.
+* Explain which behavior you expected to see instead and why.
+* Include screenshots or animated GIFs where applicable.
 
-Create your own copy of the repository by clicking the **Fork** button on GitHub.
+### Suggesting Enhancements
 
-## 2. Create a New Branch
+Enhancement suggestions are tracked as GitHub issues. When you are creating an enhancement suggestion, please provide:
 
-Create a dedicated branch for your feature, bug fix, or documentation update.
+* A clear and descriptive title.
+* A step-by-step description of the suggested enhancement.
+* Specific examples to demonstrate the steps.
+* Describe the current behavior and explain which behavior you expected to see instead.
+* Explain why this enhancement would be useful to most users.
 
-```bash
-git checkout -b feature/your-feature-name
-```
+### Pull Requests
 
-or
+* Fill in the required template.
+* Do not include issue numbers in the PR title.
+* Document new code.
+* End all files with a newline.
+* Avoid platform-dependent code.
 
-```bash
-git checkout -b fix/bug-description
-```
+## Development Setup
 
-## 3. Make Your Changes
+1. Fork the repo and create your branch from `main`.
+2. Ensure you have Node.js and npm installed.
+3. Run `npm install` in the `frontend` directory.
+4. Run `npm run dev` to start the local development server.
+5. If you've added code that should be tested, add tests.
+6. Ensure the test suite passes.
+7. Make sure your code lints.
 
-Implement your improvements while following the project's coding standards and maintaining code quality.
+## Code Style
 
-## 4. Commit Your Changes
+* We use standard Vue 3 and Vite conventions.
+* Follow the TailwindCSS utility-first styling patterns.
+* Keep components small and reusable.
+* Format code with Prettier before submitting.
 
-Write clear and descriptive commit messages.
-
-Example:
-
-```bash
-git commit -m "Add AI report export functionality"
-```
-
-## 5. Push Your Branch
-
-```bash
-git push origin feature/your-feature-name
-```
-
-## 6. Open a Pull Request
-
-Submit a Pull Request against the **main** branch.
-
-Please include:
-
-* A clear description of the changes
-* The motivation behind the changes
-* Screenshots (if UI changes are involved)
-* Any additional notes for reviewers
-
----
-
-# Coding Standards
-
-To keep the project clean and maintainable, please follow these guidelines.
-
-## Backend
-
-* Document new functions and modules where appropriate.
-* Follow Python best practices and PEP 8 style guidelines.
-* Keep business logic organized and modular.
-* Update `requirements.txt` when adding new dependencies.
-
-## Frontend
-
-* Maintain consistency with the existing Tailwind CSS design.
-* Use reusable Vue components whenever possible.
-* Keep components small, readable, and well-structured.
-* Update `package.json` when adding new packages.
-
----
-
-# Reporting Issues
-
-Found a bug?
-
-Please create a GitHub Issue that includes:
-
-* A clear and descriptive title
-* Steps to reproduce the issue
-* Expected behavior
-* Actual behavior
-* Screenshots (if applicable)
-* Your operating system
-* Browser version (for frontend issues)
-* Python and Node.js versions (if relevant)
-
-Providing detailed information helps us resolve issues more quickly.
-
----
-
-# Feature Requests
-
-Feature suggestions are always welcome.
-
-When proposing a new feature, please include:
-
-* A description of the feature
-* The problem it solves
-* Possible implementation ideas (optional)
-* Any relevant examples or references
-
----
-
-# Pull Request Guidelines
-
-Before submitting your Pull Request, please ensure that:
-
-* Your code builds successfully.
-* Existing functionality remains unaffected.
-* New code follows the project's style guidelines.
-* Documentation has been updated where necessary.
-* Commit messages are clear and meaningful.
-
----
-
-# Code of Conduct
-
-By participating in this project, you agree to interact respectfully with other contributors.
-
-Please be constructive, welcoming, and professional in all discussions and reviews.
-
----
-
-# Thank You
-
-Your time and effort are greatly appreciated.
-
-Every contribution—whether it's fixing a typo, improving documentation, reporting a bug, or implementing a new feature—helps make **Exoplanet Explorer** a better project for the community.
-
-Happy coding! 🚀
+Thank you for contributing!
