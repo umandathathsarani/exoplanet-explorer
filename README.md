@@ -72,12 +72,15 @@ Currently, Exoplanet Explorer is a **frontend-only Single Page Application (SPA)
 
 ## 🏗️ Project Architecture
 
-Exoplanet Explorer is built as a Single Page Application (SPA) using Vue 3. The repository is structured to separate concerns, keeping routing, state management, and UI components modular.
+Exoplanet Explorer is a full-stack application built with a Vue 3 frontend and a Python FastAPI backend. The repository is structured to cleanly separate the client and server concerns.
 
 ```text
 exoplanet-explorer/
-├── frontend/
-│   ├── public/                 # Static assets (favicons, background images)
+├── backend/                    # Python FastAPI Server
+│   ├── main.py                 # Core API endpoints & logic
+│   └── requirements.txt        # Python dependencies
+├── frontend/                   # Vue 3 SPA Client
+│   ├── public/                 # Static assets (favicons, screenshots)
 │   └── src/
 │       ├── assets/             # Logos and SVGs
 │       ├── components/         # Reusable Vue Components
@@ -121,21 +124,28 @@ npm -v
    ```sh
    git clone https://github.com/umandathathsarani/exoplanet-explorer.git
    ```
-2. **Navigate into the frontend directory** (this is where all the Vue application code lives):
+
+2. **Start the Backend (Python / FastAPI)**:
+   Open a terminal and navigate to the `backend` directory:
+   ```sh
+   cd exoplanet-explorer/backend
+   pip install -r requirements.txt
+   uvicorn main:app --reload
+   ```
+   *The backend will now be running on `http://localhost:8000`.*
+
+3. **Start the Frontend (Vue 3 / Vite)**:
+   Open a *second* terminal and navigate into the `frontend` directory:
    ```sh
    cd exoplanet-explorer/frontend
-   ```
-3. **Install all required dependencies** (this will download Vue, Vite, TailwindCSS, etc.):
-   ```sh
    npm install
-   ```
-4. **Start the local development server**:
-   ```sh
    npm run dev
    ```
-5. **Open your browser** and navigate to the local address provided in your terminal (usually `http://localhost:5173`).
+   *The frontend will now be running on `http://localhost:5173`.*
 
-🎉 **That's it!** The application is now running locally on your machine.
+4. **Open your browser** and navigate to `http://localhost:5173`.
+
+🎉 **That's it!** You are now running the full-stack application (Frontend + Backend) locally.
 
 ---
 
