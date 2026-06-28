@@ -60,6 +60,18 @@
 
 ---
 
+## 📸 Screenshots
+
+<div align="center">
+  <img src="frontend/public/screenshots/Screenshot%202026-06-28%20182754.png" width="48%" alt="App Screenshot 1">
+  <img src="frontend/public/screenshots/Screenshot%202026-06-28%20182810.png" width="48%" alt="App Screenshot 2">
+  <br/>
+  <img src="frontend/public/screenshots/Screenshot%202026-06-28%20182834.png" width="48%" alt="App Screenshot 3">
+  <img src="frontend/public/screenshots/Screenshot%202026-06-28%20182849.png" width="48%" alt="App Screenshot 4">
+</div>
+
+---
+
 ## 🏗️ Project Architecture
 
 Exoplanet Explorer is a full-stack application. The repository is cleanly separated into client and server environments.
