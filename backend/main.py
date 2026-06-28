@@ -89,7 +89,7 @@ mock_planets = [
 
 # --- MODELS ---
 class LoginRequest(BaseModel):
-    email: str
+    username: str
     password: str
 
 class SearchFilters(BaseModel):
@@ -113,9 +113,16 @@ def verify_token(authorization: str = Header(None)):
 @app.post("/api/auth/login")
 def login(req: LoginRequest):
     # Dummy authentication that accepts anything
-    if not req.email:
-        raise HTTPException(status_code=400, detail="Email required")
-    return {"token": f"mock_jwt_token_for_{req.email}"}
+    if not req.username:
+        raise HTTPException(status_code=400, detail="Username required")
+    return {"access_token": f"mock_jwt_token_for_{req.username}"}
+
+@app.post("/api/auth/register")
+def register(req: LoginRequest):
+    # Dummy registration that just logs in
+    if not req.username:
+        raise HTTPException(status_code=400, detail="Username required")
+    return {"access_token": f"mock_jwt_token_for_{req.username}"}
 
 @app.post("/api/exoplanets/search")
 def search_exoplanets(filters: SearchFilters, token: str = Depends(verify_token)):
