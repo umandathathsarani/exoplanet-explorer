@@ -7,9 +7,10 @@ import Chapter4 from './lectures/Chapter4.vue'
 import Chapter5 from './lectures/Chapter5.vue'
 import Chapter6 from './lectures/Chapter6.vue'
 import Chapter7 from './lectures/Chapter7.vue'
+import Chapter8 from './lectures/Chapter8.vue'
 
-const currentChapter = ref(5)
-const totalChapters = 7
+const currentChapter = ref(8)
+const totalChapters = 8
 </script>
 
 <template>
@@ -44,6 +45,7 @@ const totalChapters = 7
         <Chapter5 v-if="currentChapter === 5" />
         <Chapter6 v-if="currentChapter === 6" />
         <Chapter7 v-if="currentChapter === 7" />
+        <Chapter8 v-if="currentChapter === 8" />
         
         <!-- Pagination -->
         <div class="mt-16 pt-8 border-t border-white/10 flex justify-between items-center">
