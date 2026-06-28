@@ -36,6 +36,8 @@ class SearchQuery(BaseModel):
     method: Optional[str] = ""
     maxDistance: float
     minMass: float
+    page: int = 1
+    page_size: int = 20
 
 class NoteUpdate(BaseModel):
     content: str
@@ -121,7 +123,9 @@ def search_exoplanets(query: SearchQuery, db: Session = Depends(get_db), current
         db_query = db_query.filter(models.Exoplanet.discovery_method == query.method)
     db_query = db_query.filter(models.Exoplanet.distance_ly <= query.maxDistance)
     db_query = db_query.filter(models.Exoplanet.mass_earth >= query.minMass)
-    results = db_query.all()
+    
+    total = db_query.count()
+    results = db_query.offset((query.page - 1) * query.page_size).limit(query.page_size).all()
     
     favorite_planet_ids = set()
     if current_user:
@@ -141,7 +145,14 @@ def search_exoplanets(query: SearchQuery, db: Session = Depends(get_db), current
         }
         formatted_results.append(planet_data)
 
-    return {"status": "success", "message": f"Deep space scan complete. Found {len(results)} planetary candidates.", "results": formatted_results}
+    return {
+        "status": "success", 
+        "message": f"Deep space scan complete. Found {total} planetary candidates.", 
+        "results": formatted_results,
+        "total": total,
+        "page": query.page,
+        "page_size": query.page_size
+    }
 
 @app.get("/api/exoplanets/{planet_id}")
 def get_planet_details(planet_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):

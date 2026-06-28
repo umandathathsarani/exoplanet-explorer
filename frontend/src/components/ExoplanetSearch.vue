@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import PlanetDetails from './PlanetDetails.vue'
 import ExoplanetChart from './ExoplanetChart.vue'
 import { authState, logout } from '../state.js'
@@ -7,7 +7,9 @@ import { authState, logout } from '../state.js'
 const searchFilters = ref({
   method: '',
   maxDistance: 2000,
-  minMass: 0.1
+  minMass: 0.1,
+  page: 1,
+  page_size: 20
 })
 
 const showModal = ref(false)
@@ -16,16 +18,33 @@ const isError = ref(false)
 
 // Debounced auto-search for real-time updates
 let searchTimeout
-watch(searchFilters, () => {
+watch([() => searchFilters.value.maxDistance, () => searchFilters.value.minMass, () => searchFilters.value.method], () => {
   clearTimeout(searchTimeout)
   searchTimeout = setTimeout(() => {
-    handleSearch(true) // Pass a flag to avoid showing success modals on every slider tick
+    searchFilters.value.page = 1 // Reset to first page on filter change
+    handleSearch(true) 
   }, 300)
-}, { deep: true })
+})
 
 
 const searchResults = ref([])
 const selectedPlanetId = ref(null)
+const totalPlanets = ref(0)
+const totalPages = computed(() => Math.ceil(totalPlanets.value / searchFilters.value.page_size))
+
+const nextPage = () => {
+  if (searchFilters.value.page < totalPages.value) {
+    searchFilters.value.page++
+    handleSearch(true)
+  }
+}
+
+const prevPage = () => {
+  if (searchFilters.value.page > 1) {
+    searchFilters.value.page--
+    handleSearch(true)
+  }
+}
 
 const handleSearch = async (isSilent = false) => {
   try {
@@ -42,6 +61,7 @@ const handleSearch = async (isSilent = false) => {
 
     const data = await response.json()
     searchResults.value = data.results
+    totalPlanets.value = data.total || 0
     
     isError.value = false
     modalMessage.value = data.message
@@ -169,6 +189,38 @@ const toggleFavorite = async (planet) => {
           </div>
         </div>
       </div>
+
+      <!-- Pagination Controls -->
+      <div class="flex justify-between items-center mt-10 bg-[#222222] p-4 rounded-xl shadow-lg border border-gray-800">
+        <button 
+          @click="prevPage" 
+          :disabled="searchFilters.page <= 1"
+          class="px-6 py-2 rounded-lg font-bold transition flex items-center gap-2"
+          :class="searchFilters.page <= 1 ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-[#00bfff] text-white hover:bg-[#0099cc]'"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+          </svg>
+          Previous
+        </button>
+        
+        <div class="text-gray-300 font-mono">
+          Page <span class="text-white font-bold">{{ searchFilters.page }}</span> of <span class="text-white font-bold">{{ totalPages }}</span>
+        </div>
+        
+        <button 
+          @click="nextPage" 
+          :disabled="searchFilters.page >= totalPages"
+          class="px-6 py-2 rounded-lg font-bold transition flex items-center gap-2"
+          :class="searchFilters.page >= totalPages ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-[#00bfff] text-white hover:bg-[#0099cc]'"
+        >
+          Next
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+          </svg>
+        </button>
+      </div>
+
     </div>
 
     <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 transition-opacity">
