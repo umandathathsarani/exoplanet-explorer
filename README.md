@@ -42,8 +42,6 @@ Currently, Exoplanet Explorer is a **frontend-only Single Page Application (SPA)
 
 ## 📸 Screenshots
 
-*(Note to developer: Take screenshots of your website and save them in `frontend/public/screenshots/`, then update these links if necessary)*
-
 <div align="center">
   <img src="frontend/public/screenshots/Screenshot%202026-06-28%20182754.png" alt="Exoplanet Explorer View 1" width="48%">
   <img src="frontend/public/screenshots/Screenshot%202026-06-28%20182810.png" alt="Exoplanet Explorer View 2" width="48%">
