@@ -57,17 +57,39 @@ const handleSubmit = async () => {
         {{ errorMessage }}
       </div>
       
-      <form @submit.prevent="handleSubmit" class="space-y-4">
-        <input v-model="username" placeholder="Username" class="w-full p-3 bg-white/5 border border-white/20 rounded-lg text-white focus:outline-none focus:border-[#00bfff] focus:ring-1 focus:ring-[#00bfff] transition" required />
-        <input v-model="password" type="password" placeholder="Password" class="w-full p-3 bg-white/5 border border-white/20 rounded-lg text-white focus:outline-none focus:border-[#00bfff] focus:ring-1 focus:ring-[#00bfff] transition" required />
+      <form @submit.prevent="handleSubmit" class="space-y-5 mt-4">
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+              <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+            </svg>
+          </div>
+          <input v-model="username" type="email" placeholder="Email" class="w-full py-3 pl-12 pr-4 bg-white/20 border border-transparent rounded-lg text-white placeholder-gray-400 focus:outline-none focus:bg-white/30 focus:border-white/50 transition-all" required />
+        </div>
         
-        <button class="w-full bg-gradient-to-r from-[#00bfff] to-blue-600 text-white py-3 rounded-lg font-bold hover:shadow-[0_0_15px_rgba(0,191,255,0.4)] transition transform hover:-translate-y-0.5">
-          {{ isRegistering ? 'Create Account' : 'Sign In' }}
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+            </svg>
+          </div>
+          <input v-model="password" type="password" placeholder="Password" class="w-full py-3 pl-12 pr-4 bg-white/20 border border-transparent rounded-lg text-white placeholder-gray-400 focus:outline-none focus:bg-white/30 focus:border-white/50 transition-all" required />
+        </div>
+        
+        <button class="w-full bg-black text-white py-3 rounded-lg text-lg font-medium hover:bg-gray-900 border border-gray-800 transition-colors shadow-lg">
+          {{ isRegistering ? 'Register' : 'Login' }}
         </button>
       </form>
       
-      <button @click="isRegistering = !isRegistering" class="w-full mt-4 text-gray-400 text-sm hover:underline">
-        {{ isRegistering ? 'Already have an account? Login' : 'Need an account? Register' }}
+      <div class="flex items-center my-6">
+        <div class="flex-grow border-t border-white/30"></div>
+        <span class="mx-4 text-white/50 text-sm">OR</span>
+        <div class="flex-grow border-t border-white/30"></div>
+      </div>
+      
+      <button @click="isRegistering = !isRegistering" class="w-full bg-transparent text-white py-3 rounded-lg text-lg font-medium border border-white/30 hover:bg-white/10 transition-colors">
+        {{ isRegistering ? 'Login Instead' : 'Create An Account' }}
       </button>
     </div>
   </div>
