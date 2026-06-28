@@ -4,9 +4,11 @@ import Chapter1 from './lectures/Chapter1.vue'
 import Chapter2 from './lectures/Chapter2.vue'
 import Chapter3 from './lectures/Chapter3.vue'
 import Chapter4 from './lectures/Chapter4.vue'
+import Chapter6 from './lectures/Chapter6.vue'
+import Chapter7 from './lectures/Chapter7.vue'
 
-const currentChapter = ref(1)
-const totalChapters = 4
+const currentChapter = ref(6)
+const totalChapters = 7
 </script>
 
 <template>
@@ -38,6 +40,15 @@ const totalChapters = 4
         <Chapter2 v-if="currentChapter === 2" />
         <Chapter3 v-if="currentChapter === 3" />
         <Chapter4 v-if="currentChapter === 4" />
+        
+        <div v-if="currentChapter === 5" class="flex flex-col items-center justify-center py-20 text-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+          <h2 class="text-2xl font-bold text-white mb-2">Chapter 5 Coming Soon!</h2>
+          <p class="text-gray-400 max-w-md">The contents of this chapter are currently being written. Please check back later or proceed to Chapter 6.</p>
+        </div>
+
+        <Chapter6 v-if="currentChapter === 6" />
+        <Chapter7 v-if="currentChapter === 7" />
         
         <!-- Pagination -->
         <div class="mt-16 pt-8 border-t border-white/10 flex justify-between items-center">
