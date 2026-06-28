@@ -262,3 +262,48 @@ def get_ai_analysis(planet_id: int, db: Session = Depends(get_db), current_user:
                             "High demand on computational resources currently prevents real-time generation. "
                             "Prioritize this system for future spectroscopic transit analysis."
             }
+
+@app.get("/api/dashboard")
+def get_user_dashboard(db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    user_favorites = db.query(models.UserFavorite).filter(models.UserFavorite.user_id == current_user.id).all()
+    favorite_planet_ids = [f.planet_id for f in user_favorites]
+    
+    favorite_planets = db.query(models.Exoplanet).filter(models.Exoplanet.id.in_(favorite_planet_ids)).all() if favorite_planet_ids else []
+    
+    formatted_favorites = []
+    for planet in favorite_planets:
+        formatted_favorites.append({
+            "id": planet.id,
+            "name": planet.name,
+            "mass_earth": planet.mass_earth,
+            "orbital_period_days": planet.orbital_period_days,
+            "discovery_method": planet.discovery_method,
+            "distance_ly": planet.distance_ly,
+            "is_favorite": True
+        })
+        
+    user_notes = db.query(models.PersonalNote).filter(models.PersonalNote.user_id == current_user.id).all()
+    note_planet_ids = [n.planet_id for n in user_notes]
+    note_planets = db.query(models.Exoplanet).filter(models.Exoplanet.id.in_(note_planet_ids)).all() if note_planet_ids else []
+    
+    planet_map = {p.id: p for p in note_planets}
+    formatted_notes = []
+    for note in user_notes:
+        if note.planet_id in planet_map:
+            p = planet_map[note.planet_id]
+            formatted_notes.append({
+                "id": p.id,
+                "name": p.name,
+                "mass_earth": p.mass_earth,
+                "orbital_period_days": p.orbital_period_days,
+                "discovery_method": p.discovery_method,
+                "distance_ly": p.distance_ly,
+                "is_favorite": p.id in favorite_planet_ids,
+                "note_content": note.content
+            })
+            
+    return {
+        "status": "success",
+        "favorites": formatted_favorites,
+        "notes": formatted_notes
+    }
