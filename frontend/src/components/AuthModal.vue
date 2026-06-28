@@ -14,8 +14,14 @@ const handleSubmit = async () => {
   const isReg = isRegistering.value
   const endpoint = isReg ? '/api/auth/register' : '/api/auth/login'
   
-  let body = JSON.stringify({ username: username.value, password: password.value })
-  let headers = { 'Content-Type': 'application/json' }
+  let body, headers;
+  if (isReg) {
+    headers = { 'Content-Type': 'application/json' }
+    body = JSON.stringify({ username: username.value, password: password.value })
+  } else {
+    headers = { 'Content-Type': 'application/x-www-form-urlencoded' }
+    body = new URLSearchParams({ username: username.value, password: password.value })
+  }
 
   try {
     const response = await fetch(`http://localhost:8000${endpoint}`, {
