@@ -20,7 +20,10 @@ const handleSearch = async () => {
   try {
     const response = await fetch('http://localhost:8000/api/exoplanets/search', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authState.value.token}`
+      },
       body: JSON.stringify(searchFilters.value)
     })
 

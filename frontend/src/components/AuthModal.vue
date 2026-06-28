@@ -10,25 +10,29 @@ const password = ref('')
 const handleSubmit = async () => {
   const endpoint = isRegistering.value ? '/api/auth/register' : '/api/auth/login'
   
-  const response = await fetch(`http://localhost:8000${endpoint}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ username: username.value, password: password.value })
-  })
+  try {
+    const response = await fetch(`http://localhost:8000${endpoint}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({ username: username.value, password: password.value })
+    })
 
-  if (response.ok) {
-    const data = await response.json()
-    login(data.access_token)
-    emit('close')
-  } else {
-    alert("Authentication failed. Please check your credentials.")
+    if (response.ok) {
+      const data = await response.json()
+      login(data.access_token)
+      emit('close')
+    } else {
+      alert("Authentication failed. Please check your credentials.")
+    }
+  } catch (error) {
+    alert("Could not reach the server.")
   }
 }
 </script>
 
 <template>
   <div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4">
-    <div class="bg-[#2d2d2d] p-8 rounded-xl w-full max-w-sm border border-gray-700">
+    <div class="bg-[#2d2d2d] p-8 rounded-xl w-full max-w-sm border border-gray-700 shadow-2xl">
       <h2 class="text-2xl font-bold text-[#00bfff] mb-6">{{ isRegistering ? 'Register' : 'Login' }}</h2>
       
       <form @submit.prevent="handleSubmit" class="space-y-4">

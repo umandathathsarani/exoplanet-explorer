@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import { authState } from '../state.js'
 
 const props = defineProps({ planetId: Number })
 const emit = defineEmits(['close'])
@@ -18,7 +19,9 @@ onMounted(async () => {
   if (!props.planetId) return;
 
   try {
-    const response = await fetch(`http://localhost:8000/api/exoplanets/${props.planetId}`)
+    const response = await fetch(`http://localhost:8000/api/exoplanets/${props.planetId}`, {
+      headers: { 'Authorization': `Bearer ${authState.value.token}` }
+    })
     if (!response.ok) throw new Error("Failed to fetch")
     planetData.value = await response.json()
     researchNote.value = planetData.value.note
@@ -32,7 +35,10 @@ onMounted(async () => {
 const saveNote = async () => {
   await fetch(`http://localhost:8000/api/exoplanets/${planetData.value.id}/note`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${authState.value.token}` 
+    },
     body: JSON.stringify({ content: researchNote.value })
   })
   planetData.value.note = researchNote.value
@@ -40,7 +46,10 @@ const saveNote = async () => {
 }
 
 const deleteNote = async () => {
-  await fetch(`http://localhost:8000/api/exoplanets/${planetData.value.id}/note`, { method: 'DELETE' })
+  await fetch(`http://localhost:8000/api/exoplanets/${planetData.value.id}/note`, { 
+    method: 'DELETE',
+    headers: { 'Authorization': `Bearer ${authState.value.token}` }
+  })
   researchNote.value = ''
   planetData.value.note = ''
   showDeleteConfirm.value = false
@@ -50,7 +59,10 @@ const deleteNote = async () => {
 const toggleFavorite = async () => {
   planetData.value.is_favorite = !planetData.value.is_favorite
   try {
-    await fetch(`http://localhost:8000/api/exoplanets/${planetData.value.id}/favorite`, { method: 'PATCH' })
+    await fetch(`http://localhost:8000/api/exoplanets/${planetData.value.id}/favorite`, { 
+      method: 'PATCH',
+      headers: { 'Authorization': `Bearer ${authState.value.token}` }
+    })
   } catch (error) {
     planetData.value.is_favorite = !planetData.value.is_favorite
     alert("Could not update favorite status.")
@@ -63,13 +75,14 @@ const requestAnalysis = async () => {
   aiAnalysis.value = ''
   try {
     const response = await fetch(`http://localhost:8000/api/exoplanets/${planetData.value.id}/analyze`, {
-      method: 'POST'
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${authState.value.token}` }
     })
     if (!response.ok) throw new Error("Service Unavailable")
     const data = await response.json()
     aiAnalysis.value = data.analysis
   } catch (error) {
-    errorMessage.value = "We couldn't reach the AI observatory. Please check your connection or API key."
+    errorMessage.value = "We couldn't reach the AI observatory. Please check your connection."
   } finally {
     isAnalyzing.value = false
   }
