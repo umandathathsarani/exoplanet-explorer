@@ -18,9 +18,10 @@
   <summary><b>Table of Contents</b></summary>
   <ol>
     <li><a href="#-about-the-project">About The Project</a></li>
+    <li><a href="#-screenshots">Screenshots</a></li>
     <li><a href="#-key-features">Key Features</a></li>
     <li><a href="#-project-architecture">Project Architecture</a></li>
-    <li><a href="#-getting-started">Getting Started</a></li>
+    <li><a href="#-getting-started">Getting Started (Local Setup)</a></li>
     <li><a href="#-tech-stack">Tech Stack</a></li>
     <li><a href="#-contributing">Contributing</a></li>
     <li><a href="#-contact--creator">Contact & Creator</a></li>
@@ -34,6 +35,23 @@
 **Exoplanet Explorer** is an educational platform designed to bring the wonders of astrobiology and astrophysics to the general public. Built with modern web technologies, it features a deeply immersive, dark-themed space interface that scales beautifully from massive desktop observatories down to mobile screens.
 
 The application serves as both a reference tool and an interactive learning environment, bridging the gap between raw scientific data and accessible public education.
+
+Currently, Exoplanet Explorer is a **frontend-only Single Page Application (SPA)**. There is no dedicated backend server yet; all state and authentication are simulated locally in the browser to ensure a lightning-fast experience. Live API integrations are planned for Phase 2!
+
+---
+
+## 📸 Screenshots
+
+*(Note to developer: Take screenshots of your website and save them in `frontend/public/screenshots/`, then update these links if necessary)*
+
+<div align="center">
+  <img src="frontend/public/screenshots/Screenshot%202026-06-28%20182754.png" alt="Exoplanet Explorer View 1" width="48%">
+  <img src="frontend/public/screenshots/Screenshot%202026-06-28%20182810.png" alt="Exoplanet Explorer View 2" width="48%">
+</div>
+<div align="center">
+  <img src="frontend/public/screenshots/Screenshot%202026-06-28%20182834.png" alt="Exoplanet Explorer View 3" width="48%">
+  <img src="frontend/public/screenshots/Screenshot%202026-06-28%20182849.png" alt="Exoplanet Explorer View 4" width="48%">
+</div>
 
 ---
 
@@ -84,36 +102,40 @@ exoplanet-explorer/
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Getting Started (Local Setup)
 
-Follow these steps to get a local development environment up and running.
+Because this project is currently a frontend-only application (without a heavy backend database), setting it up locally is incredibly fast and easy. Follow these exact steps to run Exoplanet Explorer on your machine.
 
 ### Prerequisites
 
-You need [Node.js](https://nodejs.org/) and npm installed on your machine.
+You need [Node.js](https://nodejs.org/) (which comes with `npm`) installed on your machine.
+To check if you have it installed, open your terminal and run:
 ```sh
-npm install npm@latest -g
+node -v
+npm -v
 ```
 
-### Installation
+### Step-by-Step Installation
 
-1. **Clone the repository**
+1. **Clone the repository** to your local machine:
    ```sh
    git clone https://github.com/umandathathsarani/exoplanet-explorer.git
    ```
-2. **Navigate to the application directory**
+2. **Navigate into the frontend directory** (this is where all the Vue application code lives):
    ```sh
    cd exoplanet-explorer/frontend
    ```
-3. **Install NPM dependencies**
+3. **Install all required dependencies** (this will download Vue, Vite, TailwindCSS, etc.):
    ```sh
    npm install
    ```
-4. **Start the Vite development server**
+4. **Start the local development server**:
    ```sh
    npm run dev
    ```
-5. Open your browser and navigate to `http://localhost:5173`.
+5. **Open your browser** and navigate to the local address provided in your terminal (usually `http://localhost:5173`).
+
+🎉 **That's it!** The application is now running locally on your machine.
 
 ---
 
