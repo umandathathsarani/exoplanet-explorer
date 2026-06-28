@@ -1,6 +1,7 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import PlanetDetails from './PlanetDetails.vue'
+import ExoplanetChart from './ExoplanetChart.vue'
 import { authState, logout } from '../state.js'
 
 const searchFilters = ref({
@@ -13,10 +14,20 @@ const showModal = ref(false)
 const modalMessage = ref('')
 const isError = ref(false)
 
+// Debounced auto-search for real-time updates
+let searchTimeout
+watch(searchFilters, () => {
+  clearTimeout(searchTimeout)
+  searchTimeout = setTimeout(() => {
+    handleSearch(true) // Pass a flag to avoid showing success modals on every slider tick
+  }, 300)
+}, { deep: true })
+
+
 const searchResults = ref([])
 const selectedPlanetId = ref(null)
 
-const handleSearch = async () => {
+const handleSearch = async (isSilent = false) => {
   try {
     const response = await fetch('http://localhost:8000/api/exoplanets/search', {
       method: 'POST',
@@ -34,7 +45,9 @@ const handleSearch = async () => {
     
     isError.value = false
     modalMessage.value = data.message
-    showModal.value = true
+    if (!isSilent) {
+      showModal.value = true
+    }
 
   } catch (error) {
     if (error.message.includes('401')) {
@@ -44,7 +57,9 @@ const handleSearch = async () => {
     console.error(error)
     isError.value = true
     modalMessage.value = "Failed to connect to the backend. Is FastAPI running?"
-    showModal.value = true
+    if (!isSilent) {
+      showModal.value = true
+    }
     searchResults.value = []
   }
 }
@@ -116,6 +131,8 @@ const toggleFavorite = async (planet) => {
         Discovered Worlds ({{ searchResults.length }})
       </h3>
       
+      <ExoplanetChart :planets="searchResults" class="mb-10" />
+
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div v-for="planet in searchResults" :key="planet.id" @click="selectedPlanetId = planet.id" class="bg-[#2d2d2d] hover:bg-[#333333] p-5 rounded-xl transition-all shadow-md group cursor-pointer border border-transparent hover:border-[#00bfff]">
           
