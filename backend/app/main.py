@@ -49,6 +49,22 @@ class Token(BaseModel):
     token_type: str
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login")
+oauth2_scheme_optional = OAuth2PasswordBearer(tokenUrl="api/auth/login", auto_error=False)
+
+def get_optional_user(token: Optional[str] = Depends(oauth2_scheme_optional), db: Session = Depends(get_db)):
+    if not token or token == "null":
+        return None
+    try:
+        from app.core.security import SECRET_KEY, ALGORITHM
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            return None
+    except JWTError:
+        return None
+        
+    user = db.query(models.User).filter(models.User.username == username).first()
+    return user
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     credentials_exception = HTTPException(
@@ -99,14 +115,33 @@ def read_root():
     return {"message": "Hello Universe! The Exoplanet Analyst is online."}
 
 @app.post("/api/exoplanets/search")
-def search_exoplanets(query: SearchQuery, db: Session = Depends(get_db)):
+def search_exoplanets(query: SearchQuery, db: Session = Depends(get_db), current_user: Optional[models.User] = Depends(get_optional_user)):
     db_query = db.query(models.Exoplanet)
     if query.method:
         db_query = db_query.filter(models.Exoplanet.discovery_method == query.method)
     db_query = db_query.filter(models.Exoplanet.distance_ly <= query.maxDistance)
     db_query = db_query.filter(models.Exoplanet.mass_earth >= query.minMass)
     results = db_query.all()
-    return {"status": "success", "message": f"Deep space scan complete. Found {len(results)} planetary candidates.", "results": results}
+    
+    favorite_planet_ids = set()
+    if current_user:
+        favorites = db.query(models.UserFavorite).filter(models.UserFavorite.user_id == current_user.id).all()
+        favorite_planet_ids = {fav.planet_id for fav in favorites}
+        
+    formatted_results = []
+    for planet in results:
+        planet_data = {
+            "id": planet.id,
+            "name": planet.name,
+            "mass_earth": planet.mass_earth,
+            "orbital_period_days": planet.orbital_period_days,
+            "discovery_method": planet.discovery_method,
+            "distance_ly": planet.distance_ly,
+            "is_favorite": planet.id in favorite_planet_ids
+        }
+        formatted_results.append(planet_data)
+
+    return {"status": "success", "message": f"Deep space scan complete. Found {len(results)} planetary candidates.", "results": formatted_results}
 
 @app.get("/api/exoplanets/{planet_id}")
 def get_planet_details(planet_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
