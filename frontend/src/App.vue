@@ -3,7 +3,8 @@ import ExoplanetSearch from './components/ExoplanetSearch.vue'
 import AuthModal from './components/AuthModal.vue'
 import Dashboard from './components/Dashboard.vue'
 import LandingPage from './components/LandingPage.vue'
-import Lecture from './components/Lecture.vue'
+import Lessons from './components/Lessons.vue'
+import Quizzes from './components/Quizzes.vue'
 import { authState, logout } from './state.js'
 import { ref, watch } from 'vue'
 
@@ -31,11 +32,18 @@ watch(() => authState.value.isAuthenticated, (isAuth) => {
           Home
         </button>
         <button 
-          @click="currentView = 'lecture'" 
-          :class="currentView === 'lecture' ? 'text-[#00bfff]' : 'text-gray-300 hover:text-white'"
+          @click="currentView = 'lessons'" 
+          :class="currentView === 'lessons' ? 'text-[#00bfff]' : 'text-gray-300 hover:text-white'"
           class="font-semibold transition"
         >
-          Learn
+          Lessons
+        </button>
+        <button 
+          @click="currentView = 'quizzes'" 
+          :class="currentView === 'quizzes' ? 'text-[#00bfff]' : 'text-gray-300 hover:text-white'"
+          class="font-semibold transition"
+        >
+          Quizzes
         </button>
         <button 
           @click="currentView = 'search'" 
@@ -59,7 +67,8 @@ watch(() => authState.value.isAuthenticated, (isAuth) => {
     </header>
     <main class="w-full max-w-[1920px] mx-auto">
       <LandingPage v-if="currentView === 'home'" @start="currentView = 'search'" />
-      <Lecture v-if="currentView === 'lecture'" />
+      <Lessons v-if="currentView === 'lessons'" />
+      <Quizzes v-if="currentView === 'quizzes'" />
       <ExoplanetSearch v-if="currentView === 'search'" />
       <Dashboard v-if="currentView === 'dashboard'" />
       <AuthModal v-if="showAuth" @close="showAuth = false" />

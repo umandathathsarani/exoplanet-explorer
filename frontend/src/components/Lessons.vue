@@ -1,15 +1,15 @@
 <script setup>
 import { ref } from 'vue'
-import Chapter1 from './lectures/Chapter1.vue'
-import Chapter2 from './lectures/Chapter2.vue'
-import Chapter3 from './lectures/Chapter3.vue'
-import Chapter4 from './lectures/Chapter4.vue'
-import Chapter5 from './lectures/Chapter5.vue'
-import Chapter6 from './lectures/Chapter6.vue'
-import Chapter7 from './lectures/Chapter7.vue'
-import Chapter8 from './lectures/Chapter8.vue'
-import Chapter9 from './lectures/Chapter9.vue'
-import Chapter10 from './lectures/Chapter10.vue'
+import Chapter1 from './lessons/Chapter1.vue'
+import Chapter2 from './lessons/Chapter2.vue'
+import Chapter3 from './lessons/Chapter3.vue'
+import Chapter4 from './lessons/Chapter4.vue'
+import Chapter5 from './lessons/Chapter5.vue'
+import Chapter6 from './lessons/Chapter6.vue'
+import Chapter7 from './lessons/Chapter7.vue'
+import Chapter8 from './lessons/Chapter8.vue'
+import Chapter9 from './lessons/Chapter9.vue'
+import Chapter10 from './lessons/Chapter10.vue'
 
 const currentChapter = ref(9)
 const totalChapters = 10
