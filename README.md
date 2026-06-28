@@ -30,7 +30,7 @@
 <br/>
 
 <details>
-  <summary><b>▼ Table of Contents</b></summary>
+  <summary><b>Table of Contents</b></summary>
   <ul>
     <li><a href="#-about-the-project">About the Project</a></li>
     <li><a href="#-features">Features</a></li>
