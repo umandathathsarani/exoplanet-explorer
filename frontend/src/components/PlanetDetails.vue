@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { authState } from '../state.js'
+import { authState, logout } from '../state.js'
 
 const props = defineProps({ planetId: Number })
 const emit = defineEmits(['close'])
@@ -22,10 +22,14 @@ onMounted(async () => {
     const response = await fetch(`http://localhost:8000/api/exoplanets/${props.planetId}`, {
       headers: { 'Authorization': `Bearer ${authState.value.token}` }
     })
-    if (!response.ok) throw new Error("Failed to fetch")
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
     planetData.value = await response.json()
     researchNote.value = planetData.value.note
   } catch (error) {
+    if (error.message.includes('401')) {
+      logout(); 
+      window.location.reload(); 
+    }
     console.error("Load failed:", error)
   } finally {
     loading.value = false
@@ -33,37 +37,54 @@ onMounted(async () => {
 })
 
 const saveNote = async () => {
-  await fetch(`http://localhost:8000/api/exoplanets/${planetData.value.id}/note`, {
-    method: 'POST',
-    headers: { 
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${authState.value.token}` 
-    },
-    body: JSON.stringify({ content: researchNote.value })
-  })
-  planetData.value.note = researchNote.value
-  isEditing.value = false
+  try {
+    const response = await fetch(`http://localhost:8000/api/exoplanets/${planetData.value.id}/note`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authState.value.token}` 
+      },
+      body: JSON.stringify({ content: researchNote.value })
+    })
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
+    planetData.value.note = researchNote.value
+    isEditing.value = false
+  } catch (error) {
+    if (error.message.includes('401')) { logout(); window.location.reload(); }
+    console.error("Save note failed:", error)
+  }
 }
 
 const deleteNote = async () => {
-  await fetch(`http://localhost:8000/api/exoplanets/${planetData.value.id}/note`, { 
-    method: 'DELETE',
-    headers: { 'Authorization': `Bearer ${authState.value.token}` }
-  })
-  researchNote.value = ''
-  planetData.value.note = ''
-  showDeleteConfirm.value = false
-  isEditing.value = false
+  try {
+    const response = await fetch(`http://localhost:8000/api/exoplanets/${planetData.value.id}/note`, { 
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${authState.value.token}` }
+    })
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
+    researchNote.value = ''
+    planetData.value.note = ''
+    showDeleteConfirm.value = false
+    isEditing.value = false
+  } catch (error) {
+    if (error.message.includes('401')) { logout(); window.location.reload(); }
+    console.error("Delete note failed:", error)
+  }
 }
 
 const toggleFavorite = async () => {
   planetData.value.is_favorite = !planetData.value.is_favorite
   try {
-    await fetch(`http://localhost:8000/api/exoplanets/${planetData.value.id}/favorite`, { 
+    const response = await fetch(`http://localhost:8000/api/exoplanets/${planetData.value.id}/favorite`, { 
       method: 'PATCH',
       headers: { 'Authorization': `Bearer ${authState.value.token}` }
     })
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
   } catch (error) {
+    if (error.message.includes('401')) {
+      logout(); 
+      window.location.reload(); 
+    }
     planetData.value.is_favorite = !planetData.value.is_favorite
     alert("Could not update favorite status.")
   }
@@ -78,10 +99,14 @@ const requestAnalysis = async () => {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${authState.value.token}` }
     })
-    if (!response.ok) throw new Error("Service Unavailable")
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
     const data = await response.json()
     aiAnalysis.value = data.analysis
   } catch (error) {
+    if (error.message.includes('401')) {
+      logout(); 
+      window.location.reload(); 
+    }
     errorMessage.value = "We couldn't reach the AI observatory. Please check your connection."
   } finally {
     isAnalyzing.value = false

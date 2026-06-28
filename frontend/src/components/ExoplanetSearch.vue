@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import PlanetDetails from './PlanetDetails.vue'
-import { globalState } from '../state.js'
+import { authState, logout } from '../state.js'
 
 const searchFilters = ref({
   method: '',
@@ -37,6 +37,10 @@ const handleSearch = async () => {
     showModal.value = true
 
   } catch (error) {
+    if (error.message.includes('401')) {
+      logout(); 
+      window.location.reload(); 
+    }
     console.error(error)
     isError.value = true
     modalMessage.value = "Failed to connect to the backend. Is FastAPI running?"
@@ -51,12 +55,17 @@ const toggleFavorite = async (planet) => {
 
   try {
     const response = await fetch(`http://localhost:8000/api/exoplanets/${planet.id}/favorite`, {
-      method: 'PATCH'
+      method: 'PATCH',
+      headers: { 'Authorization': `Bearer ${authState.value.token}` }
     })
     
-    if (!response.ok) throw new Error("Failed to update database")
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
     
   } catch (error) {
+    if (error.message.includes('401')) {
+      logout(); 
+      window.location.reload(); 
+    }
     console.error("Favorite toggle failed:", error)
     planet.is_favorite = !planet.is_favorite
     alert("Communication failure: Could not save favorite status.")

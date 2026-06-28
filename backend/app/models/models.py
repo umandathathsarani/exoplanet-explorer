@@ -21,8 +21,9 @@ class Exoplanet(Base):
     orbital_period_days = Column(Float)
     discovery_method = Column(String)
     distance_ly = Column(Float)
+    host_star_id = Column(Integer, ForeignKey("host_stars.id"))
     
-    host_star = relationship("HostStar", back_populates="planet", uselist=False)
+    host_star = relationship("HostStar", back_populates="planets")
     notes = relationship("PersonalNote", back_populates="planet")
     favorited_by = relationship("UserFavorite", back_populates="planet")
 
@@ -33,9 +34,8 @@ class HostStar(Base):
     name = Column(String)
     temperature_k = Column(Float)
     luminosity = Column(Float)
-    planet_id = Column(Integer, ForeignKey("exoplanets.id"))
 
-    planet = relationship("Exoplanet", back_populates="host_star")
+    planets = relationship("Exoplanet", back_populates="host_star")
 
 class PersonalNote(Base):
     __tablename__ = "personal_notes"

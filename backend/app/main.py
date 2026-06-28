@@ -111,7 +111,8 @@ def search_exoplanets(query: SearchQuery, db: Session = Depends(get_db)):
 @app.get("/api/exoplanets/{planet_id}")
 def get_planet_details(planet_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
     planet = db.query(models.Exoplanet).filter(models.Exoplanet.id == planet_id).first()
-    if not planet: raise HTTPException(status_code=404, detail="Planet not found in database.")
+    if not planet: 
+        raise HTTPException(status_code=404, detail="Planet not found in database.")
     
     note = db.query(models.PersonalNote).filter(
         models.PersonalNote.planet_id == planet_id, 
@@ -123,12 +124,18 @@ def get_planet_details(planet_id: int, db: Session = Depends(get_db), current_us
         models.UserFavorite.user_id == current_user.id
     ).first()
     
+    host_star_data = {
+        "name": planet.host_star.name if planet.host_star else "Unknown",
+        "temperature_k": planet.host_star.temperature_k if planet.host_star else 0,
+        "luminosity": planet.host_star.luminosity if planet.host_star else 0
+    }
+    
     return {
         "id": planet.id, "name": planet.name, "mass_earth": planet.mass_earth,
         "orbital_period_days": planet.orbital_period_days, "discovery_method": planet.discovery_method,
         "distance_ly": planet.distance_ly, "is_favorite": bool(fav),
         "note": note.content if note else "",
-        "host_star": {"name": planet.host_star.name, "temperature_k": planet.host_star.temperature_k, "luminosity": planet.host_star.luminosity}
+        "host_star": host_star_data
     }
 
 @app.patch("/api/exoplanets/{planet_id}/favorite")
