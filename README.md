@@ -123,7 +123,14 @@ npm -v
    git clone https://github.com/umandathathsarani/exoplanet-explorer.git
    ```
 
-2. **Start the Backend (Python / FastAPI)**:
+2. **Configure the Database**:
+   Create a `.env` file in the `backend` directory and add your PostgreSQL connection string:
+   ```env
+   DATABASE_URL=postgresql://user:password@localhost:5432/dbname
+   GEMINI_API_KEYS=your_api_key_here
+   ```
+
+3. **Start the Backend (Python / FastAPI)**:
    Open a terminal and navigate to the `backend` directory:
    ```sh
    cd exoplanet-explorer/backend
@@ -149,9 +156,17 @@ npm -v
 
 ## 💻 Tech Stack
 
-* **[Vue 3](https://vuejs.org/)**: The progressive JavaScript framework (using Composition API).
-* **[Vite](https://vitejs.dev/)**: Next-generation frontend tooling for blazing fast builds.
-* **[Tailwind CSS](https://tailwindcss.com/)**: A utility-first CSS framework for rapid UI development.
+### Frontend
+- **Framework**: Vue 3 (Composition API)
+- **Styling**: TailwindCSS
+- **Build Tool**: Vite
+- **Icons**: Heroicons & Custom SVGs
+
+### Backend
+- **Framework**: Python FastAPI
+- **Database**: PostgreSQL (via SQLAlchemy)
+- **AI Integration**: Google Gemini 2.0 Flash
+- **Authentication**: JWT (JSON Web Tokens)
 
 ---
 
