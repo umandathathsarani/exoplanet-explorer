@@ -191,27 +191,33 @@ const bonusChallenges = [
 ]
 
 const userAnswers = ref({})
-const showExplanations = ref({})
+const submittedSections = ref({})
+const sectionScores = ref({})
 const showBonusExplanations = ref({})
 
-const selectAnswer = (questionId, optionIndex) => {
-  if (showExplanations.value[questionId]) return; // Don't allow changing answer after revealing
+const selectAnswer = (sectionLevel, questionId, optionIndex) => {
+  if (submittedSections.value[sectionLevel]) return; // Don't allow changing answer after revealing
   userAnswers.value[questionId] = optionIndex
 }
 
-const revealAnswer = (questionId) => {
-  if (userAnswers.value[questionId] !== undefined) {
-    showExplanations.value[questionId] = true
-  }
+const submitSection = (section) => {
+  let score = 0;
+  section.questions.forEach(q => {
+    if (userAnswers.value[q.id] === q.answer) {
+      score++;
+    }
+  });
+  sectionScores.value[section.level] = score;
+  submittedSections.value[section.level] = true;
 }
 
 const toggleBonus = (id) => {
   showBonusExplanations.value[id] = !showBonusExplanations.value[id]
 }
 
-const getOptionClass = (q, optionIndex) => {
+const getOptionClass = (sectionLevel, q, optionIndex) => {
   const isSelected = userAnswers.value[q.id] === optionIndex
-  const isRevealed = showExplanations.value[q.id]
+  const isRevealed = submittedSections.value[sectionLevel]
   const isCorrect = q.answer === optionIndex
 
   if (!isRevealed) {
@@ -269,39 +275,43 @@ const getOptionClass = (q, optionIndex) => {
               <div 
                 v-for="(opt, oIdx) in q.options" 
                 :key="oIdx"
-                @click="selectAnswer(q.id, oIdx)"
+                @click="selectAnswer(section.level, q.id, oIdx)"
                 class="p-4 rounded-xl border transition-all duration-300"
-                :class="getOptionClass(q, oIdx)"
+                :class="getOptionClass(section.level, q, oIdx)"
               >
                 <span class="font-bold mr-2 text-sm" :class="userAnswers.value?.[q.id] === oIdx ? 'text-white' : 'text-gray-500'">{{ String.fromCharCode(65 + oIdx) }})</span>
                 {{ opt }}
               </div>
             </div>
 
-            <div class="flex justify-between items-center">
-              <button 
-                @click="revealAnswer(q.id)"
-                :disabled="userAnswers[q.id] === undefined || showExplanations[q.id]"
-                class="px-6 py-2 rounded-full font-bold text-sm transition-all"
-                :class="userAnswers[q.id] === undefined 
-                  ? 'bg-gray-800 text-gray-500 cursor-not-allowed' 
-                  : showExplanations[q.id] ? 'bg-transparent text-gray-400' : 'bg-[#00bfff] text-black hover:bg-[#0099cc] shadow-[0_0_15px_rgba(0,191,255,0.4)]'"
-              >
-                {{ showExplanations[q.id] ? 'Answer Revealed' : 'Check Answer' }}
-              </button>
-            </div>
-
             <!-- Explanation -->
-            <div v-if="showExplanations[q.id]" class="mt-6 p-4 rounded-xl border"
+            <div v-if="submittedSections[section.level]" class="mt-6 p-4 rounded-xl border"
                  :class="userAnswers[q.id] === q.answer ? 'bg-green-900/20 border-green-500/30' : 'bg-red-900/20 border-red-500/30'">
               <p class="text-sm">
                 <strong :class="userAnswers[q.id] === q.answer ? 'text-green-400' : 'text-red-400'">
-                  {{ userAnswers[q.id] === q.answer ? 'Correct!' : 'Incorrect.' }}
+                  {{ userAnswers[q.id] === q.answer ? 'Correct!' : (userAnswers[q.id] === undefined ? 'Missed.' : 'Incorrect.') }}
                 </strong>
                 <span class="text-gray-300 ml-2">{{ q.explanation }}</span>
               </p>
             </div>
           </div>
+        </div>
+
+        <!-- Submit Section -->
+        <div class="mt-8 p-6 bg-black/40 rounded-2xl border border-white/10 flex flex-col items-center">
+          <div v-if="submittedSections[section.level]" class="text-center">
+            <h3 class="text-3xl font-bold text-white mb-2">Quiz Completed!</h3>
+            <p class="text-xl text-gray-300">
+              Your Score: <span class="font-bold text-4xl ml-2" :class="sectionScores[section.level] === section.questions.length ? 'text-green-400' : 'text-[#00bfff]'">{{ sectionScores[section.level] }} / {{ section.questions.length }}</span>
+            </p>
+          </div>
+          <button 
+            v-else 
+            @click="submitSection(section)" 
+            class="px-8 py-3 rounded-full font-bold text-black bg-[#00bfff] hover:bg-[#0099cc] shadow-[0_0_15px_rgba(0,191,255,0.4)] transition-all transform hover:scale-105"
+          >
+            Submit {{ section.level.split(':')[0] }}
+          </button>
         </div>
       </section>
 

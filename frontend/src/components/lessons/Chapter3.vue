@@ -56,7 +56,7 @@
         <!-- Rocky & Super-Earths -->
         <div class="flex flex-col lg:flex-row gap-6 items-center bg-black/30 p-6 rounded-2xl border border-white/10">
           <div class="w-full lg:w-1/3 flex justify-center">
-            <img src="/rocky-planet.png" alt="Rocky Planet" class="rounded-full shadow-[0_0_30px_rgba(200,200,200,0.1)] w-48 h-48 object-cover border border-white/5" onerror="this.src='/space-bg-3.png'" />
+            <img src="/space-bg-2.png" alt="Rocky Planet" class="rounded-full shadow-[0_0_30px_rgba(200,200,200,0.1)] w-48 h-48 object-cover border border-white/5" onerror="this.src='/space-bg-3.png'" />
           </div>
           <div class="w-full lg:w-2/3">
             <h3 class="text-xl font-bold text-white mb-2">3.3 Rocky Planets & 3.4 Super-Earths</h3>
@@ -68,7 +68,7 @@
         <!-- Gas Giants -->
         <div class="flex flex-col lg:flex-row-reverse gap-6 items-center bg-black/30 p-6 rounded-2xl border border-white/10">
           <div class="w-full lg:w-1/3 flex justify-center">
-            <img src="/gas-giant.png" alt="Gas Giant" class="rounded-full shadow-[0_0_30px_rgba(255,150,50,0.1)] w-48 h-48 object-cover border border-white/5" onerror="this.src='/space-bg-3.png'" />
+            <img src="/space-bg-3.png" alt="Gas Giant" class="rounded-full shadow-[0_0_30px_rgba(255,150,50,0.1)] w-48 h-48 object-cover border border-white/5" onerror="this.src='/space-bg-3.png'" />
           </div>
           <div class="w-full lg:w-2/3">
             <h3 class="text-xl font-bold text-white mb-2">3.6 Gas Giants & Hot Jupiters</h3>
