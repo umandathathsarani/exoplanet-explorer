@@ -46,19 +46,22 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4">
-    <div class="bg-[#2d2d2d] p-8 rounded-xl w-full max-w-sm border border-gray-700 shadow-2xl">
-      <h2 class="text-2xl font-bold text-[#00bfff] mb-6">{{ isRegistering ? 'Register' : 'Login' }}</h2>
+  <div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+    <div class="bg-black/60 backdrop-blur-2xl p-8 rounded-2xl w-full max-w-sm border border-white/20 shadow-2xl relative">
+      <button @click="emit('close')" class="absolute top-4 right-4 text-gray-400 hover:text-white transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+      </button>
+      <h2 class="text-2xl font-bold text-white mb-6">{{ isRegistering ? 'Register' : 'Login' }}</h2>
       
       <div v-if="errorMessage" class="mb-4 p-3 bg-red-900/30 border border-red-500 text-red-200 text-sm rounded">
         {{ errorMessage }}
       </div>
       
       <form @submit.prevent="handleSubmit" class="space-y-4">
-        <input v-model="username" placeholder="Username" class="w-full p-3 bg-[#1a1a1a] border border-gray-600 rounded-lg text-white" required />
-        <input v-model="password" type="password" placeholder="Password" class="w-full p-3 bg-[#1a1a1a] border border-gray-600 rounded-lg text-white" required />
+        <input v-model="username" placeholder="Username" class="w-full p-3 bg-white/5 border border-white/20 rounded-lg text-white focus:outline-none focus:border-[#00bfff] focus:ring-1 focus:ring-[#00bfff] transition" required />
+        <input v-model="password" type="password" placeholder="Password" class="w-full p-3 bg-white/5 border border-white/20 rounded-lg text-white focus:outline-none focus:border-[#00bfff] focus:ring-1 focus:ring-[#00bfff] transition" required />
         
-        <button class="w-full bg-[#00bfff] text-white py-3 rounded-lg font-bold hover:bg-[#0099cc] transition">
+        <button class="w-full bg-gradient-to-r from-[#00bfff] to-blue-600 text-white py-3 rounded-lg font-bold hover:shadow-[0_0_15px_rgba(0,191,255,0.4)] transition transform hover:-translate-y-0.5">
           {{ isRegistering ? 'Create Account' : 'Sign In' }}
         </button>
       </form>

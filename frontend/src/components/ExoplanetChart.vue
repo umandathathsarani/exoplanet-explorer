@@ -53,7 +53,7 @@ const chartOptions = {
         color: '#aaaaaa',
         font: { size: 14, weight: 'bold' }
       },
-      grid: { color: '#333333' },
+      grid: { color: 'rgba(255, 255, 255, 0.05)' },
       ticks: { color: '#aaaaaa' }
     },
     y: {
@@ -63,7 +63,7 @@ const chartOptions = {
         color: '#aaaaaa',
         font: { size: 14, weight: 'bold' }
       },
-      grid: { color: '#333333' },
+      grid: { color: 'rgba(255, 255, 255, 0.05)' },
       ticks: { color: '#aaaaaa' }
     }
   },
@@ -72,12 +72,12 @@ const chartOptions = {
       labels: { color: '#ffffff' }
     },
     tooltip: {
-      backgroundColor: 'rgba(30, 30, 30, 0.9)',
+      backgroundColor: 'rgba(15, 23, 42, 0.9)',
       titleColor: '#00bfff',
       bodyColor: '#ffffff',
-      borderColor: '#00bfff',
+      borderColor: 'rgba(0, 191, 255, 0.5)',
       borderWidth: 1,
-      padding: 10,
+      padding: 12,
       displayColors: false,
       callbacks: {
         title: function(context) {
@@ -98,10 +98,10 @@ const chartOptions = {
 </script>
 
 <template>
-  <div class="h-[400px] w-full bg-[#1e1e1e] rounded-xl border border-gray-800 p-4 shadow-2xl relative overflow-hidden group hover:border-gray-600 transition-colors">
-    <div class="absolute top-0 right-0 w-32 h-32 bg-[#00bfff]/5 rounded-bl-full group-hover:bg-[#00bfff]/10 transition-colors pointer-events-none"></div>
-    <Scatter v-if="props.planets.length > 0" :data="chartData" :options="chartOptions" />
-    <div v-else class="h-full flex items-center justify-center text-gray-500 font-mono">
+  <div class="h-[400px] w-full bg-black/60 backdrop-blur-xl rounded-2xl border border-white/20 p-4 shadow-2xl relative overflow-hidden group hover:border-[#00bfff]/50 transition-colors">
+    <div class="absolute top-0 right-0 w-32 h-32 bg-[#00bfff]/10 rounded-bl-full blur-2xl group-hover:bg-[#00bfff]/20 transition-colors pointer-events-none"></div>
+    <Scatter v-if="props.planets.length > 0" :data="chartData" :options="chartOptions" class="relative z-10" />
+    <div v-else class="h-full flex items-center justify-center text-gray-500 font-mono relative z-10">
       Awaiting valid telemetry data...
     </div>
   </div>

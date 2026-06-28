@@ -1,1 +1,18 @@
 @import "tailwindcss";
+
+@theme {
+  --color-brand-blue: #00bfff;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #030308;
+  background-image: url('/space-bg-3.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: #e5e7eb;
+}
